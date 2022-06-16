@@ -27,13 +27,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'default.jpg',
   },
-  firstName: {
+  fullName: {
     type: String,
     required: [true, 'First name is required!'],
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Last name is required!'],
   },
   birthDate: {
     type: Date,
@@ -90,10 +86,6 @@ const userSchema = new mongoose.Schema({
       message: 'Valid roles: hr, employee!',
     },
   },
-});
-
-userSchema.virtual('fullName').get(function () {
-  return this.firstName + ' ' + this.lastName;
 });
 
 userSchema.virtual('annualSalary').get(function () {
