@@ -86,6 +86,10 @@ const userSchema = new mongoose.Schema({
       message: 'Valid roles: hr, employee!',
     },
   },
+  active: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.virtual('annualSalary').get(function () {
