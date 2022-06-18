@@ -33,7 +33,8 @@ const createToken = async (user) => {
   return token;
 };
 
-const verifyToken = (token) => jwtVerify(token, process.env.SECRET);
+const verifyToken = (token) =>
+  jwtVerify(token, process.env.SECRET, { expiresIn: '1d' });
 
 const getUser = (id) => userModel.findById(id).lean();
 
