@@ -9,7 +9,7 @@ const getEmployees = async (req, res) => {
   try {
     const employees = await userModel
       .find({})
-      .select('fullName photo jobTitle');
+      .select('fullName photo department jobTitle');
     res.status(200).json({ status: 'Success', data: employees });
   } catch (error) {
     const message = mongoErrorHandler(error);
