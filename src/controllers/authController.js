@@ -19,6 +19,7 @@ const registerUser = async (req, res) => {
         id: loggedUser._id,
         email: loggedUser.email,
         fullName: loggedUser.fullName,
+        role: loggedUser.role,
         photo: loggedUser.photo,
         token: token,
       },
