@@ -16,7 +16,7 @@ const registerUser = async (req, res) => {
     res.status(200).json({
       status: 'Success',
       data: {
-        id: loggedUser._id,
+        _id: loggedUser._id,
         email: loggedUser.email,
         fullName: loggedUser.fullName,
         role: loggedUser.role,
@@ -38,7 +38,7 @@ const logUser = async (req, res) => {
     res.status(200).json({
       status: 'Success',
       data: {
-        id: loggedUser._id,
+        _id: loggedUser._id,
         email: loggedUser.email,
         fullName: loggedUser.fullName,
         role: loggedUser.role,
