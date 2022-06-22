@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
+    enum: {
+      values: ['hr', 'accounting', 'sales', 'it'],
+      message: 'Valid types: hr, accounting, sales, it!',
+    },
   },
   employmentType: {
     type: String,
@@ -86,14 +90,14 @@ const userSchema = new mongoose.Schema({
       message: 'Valid roles: hr, employee!',
     },
   },
-  active: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 userSchema.virtual('annualSalary').get(function () {
   return this.salary * 12;
+});
+
+userSchema.virtual('employeeFor').get(function () {
+  // will calculate the entry date until today
 });
 
 //hashes the password
