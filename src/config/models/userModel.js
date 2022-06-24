@@ -47,21 +47,21 @@ const userSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  JobTitle: {
+  jobTitle: {
     type: String,
   },
   department: {
     type: String,
     enum: {
-      values: ['hr', 'accounting', 'sales', 'it'],
-      message: 'Valid types: hr, accounting, sales, it!',
+      values: ['Human resource', 'Management', 'Accountin', 'Sales', 'IT'],
+      message: 'Valid types: Human resource, Management, Accountin, Sales, IT!',
     },
   },
   employmentType: {
     type: String,
     enum: {
-      values: ['intern', 'fullTime', 'partTime'],
-      message: 'Valid types: intern, fullTime, partTime!',
+      values: ['Intern', 'Full time', 'Part time'],
+      message: 'Valid types: Intern, Full time, Part time!',
     },
   },
   salary: {
@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema({
       'Salary must be positive number!',
     ],
   },
-  entry: {
+  entryDate: {
     type: Date,
   },
   remainingLeave: {
