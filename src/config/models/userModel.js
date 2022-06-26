@@ -29,7 +29,8 @@ const userSchema = new mongoose.Schema({
   },
   fullName: {
     type: String,
-    required: [true, 'First name is required!'],
+    required: [true, 'Full name is required!'],
+    minlength: [3, 'Full name with 3 or more characters required!'],
   },
   birthDate: {
     type: Date,
@@ -43,6 +44,12 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    validate: [
+      (phone) => {
+        return phone.length === 10 || phone.length === 0;
+      },
+      'Phone number with 10 digits required!',
+    ],
   },
   address: {
     type: String,
@@ -66,11 +73,12 @@ const userSchema = new mongoose.Schema({
   },
   salary: {
     type: Number,
+    default: 0,
     validate: [
       (salary) => {
-        return salary > 0;
+        return salary >= 0;
       },
-      'Salary must be positive number!',
+      'Salary must be equal to 0 or higher!',
     ],
   },
   entryDate: {
