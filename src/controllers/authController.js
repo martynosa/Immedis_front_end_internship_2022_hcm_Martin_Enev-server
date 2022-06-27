@@ -1,8 +1,8 @@
 const express = require('express');
 const authServices = require('../services/authServices');
 const middlewares = require('../services/middlewares');
-const mongoErrorHandler = require('../services/errorServices');
 const multerServices = require('../config/multerConfig');
+const helpers = require('../services/helpers');
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };
@@ -47,7 +47,7 @@ const logUser = async (req, res) => {
       },
     });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };
@@ -68,7 +68,7 @@ const profilePhoto = async (req, res) => {
       data: updatedUser.photo,
     });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };

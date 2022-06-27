@@ -1,6 +1,5 @@
 const express = require('express');
 const middlewares = require('../services/middlewares');
-const mongoErrorHandler = require('../services/errorServices');
 const userModel = require('../config/models/userModel');
 const helpers = require('../services/helpers');
 
@@ -13,7 +12,7 @@ const getEmployees = async (req, res) => {
       .select('fullName photo department jobTitle');
     res.status(200).json({ status: 'Success', data: employees });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };
@@ -24,45 +23,23 @@ const getEmployee = async (req, res) => {
     const employee = await userModel.findById(employeeId);
     res.status(200).json({ status: 'Success', data: employee });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };
 
 const updateEmployee = async (req, res) => {
   const employeeId = req.params.id;
-  let updatedEmployee = helpers.filterBody(req.body, [
-    'fullName',
-    'gender',
-    'birthDate',
-    'phone',
-    'address',
-    'entryDate',
-    'employmentType',
-    'department',
-    'jobTitle',
-    'salary',
-  ]);
-
-  if (req.user.role !== 'hr') {
-    updatedEmployee = helpers.filterBody(req.body, [
-      'fullName',
-      'gender',
-      'birthDate',
-      'phone',
-      'address',
-    ]);
-  }
-
+  let newData = helpers.filterBodyByRole(req.body, req.user.role);
   try {
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: employeeId },
-      updatedEmployee,
+      newData,
       { new: true, runValidators: true }
     );
     res.status(200).json({ status: 'Success', data: updatedUser });
   } catch (error) {
-    const message = mongoErrorHandler(error);
+    const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };

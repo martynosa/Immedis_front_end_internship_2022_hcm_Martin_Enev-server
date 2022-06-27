@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
   }
 };
 
-//blocks non logged users from modifying the items and user and returns error code + message
+//blocks non logged users
 const isGuest = (req, res, next) => {
   if (!req.user) {
     return res.status(500).json({ status: 'Error', message: 'Not logged in!' });
@@ -25,7 +25,7 @@ const isGuest = (req, res, next) => {
   next();
 };
 
-//blocks non owners or employees accessing or modifying data and returns error code + message
+//blocks non owners or employees
 const isAuthorized = (req, res, next) => {
   if (req.user.role !== 'hr') {
     if (req.user._id !== req.params.id)
@@ -36,6 +36,7 @@ const isAuthorized = (req, res, next) => {
   next();
 };
 
+//blocks non HRs
 const isHR = (req, res, next) => {
   if (req.user.role !== 'hr') {
     return res
