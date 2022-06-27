@@ -25,9 +25,31 @@ const isGuest = (req, res, next) => {
   next();
 };
 
+//blocks non owners or employees accessing or modifying data and returns error code + message
+const isAuthorized = (req, res, next) => {
+  if (req.user.role !== 'hr') {
+    if (req.user._id !== req.params.id)
+      return res
+        .status(500)
+        .json({ status: 'Error', message: 'Not authorized!' });
+  }
+  next();
+};
+
+const isHR = (req, res, next) => {
+  if (req.user.role !== 'hr') {
+    return res
+      .status(500)
+      .json({ status: 'Error', message: "Authorized for HR's only!" });
+  }
+  next();
+};
+
 const middlewares = {
   auth,
   isGuest,
+  isAuthorized,
+  isHR,
 };
 
 module.exports = middlewares;
