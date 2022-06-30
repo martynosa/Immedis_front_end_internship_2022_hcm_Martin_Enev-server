@@ -7,10 +7,12 @@ const multerStorage = multer.memoryStorage();
 const resizeProfilePhoto = (req, res, next) => {
   if (!req.file) return next();
 
-  req.file.filename = `${req.user.username}-${uuidv4()}.jpeg`;
+  req.file.filename = `${req.params.id}-${
+    req.file.originalname
+  }-${uuidv4()}.jpeg`;
 
   sharp(req.file.buffer)
-    .resize(500, 500)
+    .resize(300, 300)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`src/public/users/${req.file.filename}`);

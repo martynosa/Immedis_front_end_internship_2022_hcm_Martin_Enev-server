@@ -41,16 +41,12 @@ const verifyToken = (token) =>
 
 const getUser = (id) => userModel.findById(id).lean();
 
-const updateUser = (id, updatedUser) =>
-  userModel.findByIdAndUpdate(id, updatedUser, { new: true });
-
 const authServices = {
   registerUser,
   logUser,
   createToken,
   verifyToken,
   getUser,
-  updateUser,
 };
 
 module.exports = authServices;

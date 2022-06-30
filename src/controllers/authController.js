@@ -1,7 +1,6 @@
 const express = require('express');
 const authServices = require('../services/authServices');
 const middlewares = require('../services/middlewares');
-const multerServices = require('../config/multerConfig');
 const helpers = require('../services/helpers');
 
 const router = express.Router();
@@ -52,35 +51,7 @@ const logUser = async (req, res) => {
   }
 };
 
-const profilePhoto = async (req, res) => {
-  if (!req.file) {
-    return res.status(500).json({
-      status: 'Error',
-      message: 'Not an image file or no file chosen!',
-    });
-  }
-  try {
-    const updatedUser = await authServices.updateUser(req.user.id, {
-      photo: req.file.filename,
-    });
-    res.status(200).json({
-      status: 'Success',
-      data: updatedUser.photo,
-    });
-  } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
-  }
-};
-
 router.post('/register', registerUser);
 router.post('/login', logUser);
-router.post(
-  '/uploadPhoto',
-  middlewares.isGuest,
-  multerServices.uploadProfilePhoto,
-  multerServices.resizeProfilePhoto,
-  profilePhoto
-);
 
 module.exports = router;
