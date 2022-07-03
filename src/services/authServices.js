@@ -22,18 +22,18 @@ const logUser = async (userToLog) => {
   if (!isValid) {
     throw 'Email or Password are invalid!';
   }
+
   return user;
 };
 
-const createToken = async (user) => {
+const createToken = (user) => {
   const { _id, email, role } = user;
   const payload = {
     _id,
     email,
     role,
   };
-  const token = await jwtSign(payload, process.env.SECRET);
-  return token;
+  return jwtSign(payload, process.env.SECRET);
 };
 
 const verifyToken = (token) =>

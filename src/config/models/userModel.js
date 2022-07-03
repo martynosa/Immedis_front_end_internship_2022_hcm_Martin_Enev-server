@@ -1,104 +1,108 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: [true, 'Email is required!'],
-    validate: [/^[^@\s]+@[^@\s]+\.[^@\s]+$/, 'Invalid email address!'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Password is required!'],
-    minlength: [6, 'Password with 6 or more characters required!'],
-  },
-  rePassword: {
-    type: String,
-    required: [true, 'Repeat Password is required!'],
-    validate: {
-      validator: function (el) {
-        return el === this.password;
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      unique: true,
+      required: [true, 'Email is required!'],
+      validate: [/^[^@\s]+@[^@\s]+\.[^@\s]+$/, 'Invalid email address!'],
+    },
+    password: {
+      type: String,
+      required: [true, 'Password is required!'],
+      minlength: [6, 'Password with 6 or more characters required!'],
+    },
+    rePassword: {
+      type: String,
+      required: [true, 'Repeat Password is required!'],
+      validate: {
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: 'Password and Repeat password must be identical!',
       },
-      message: 'Password and Repeat password must be identical!',
     },
-  },
-  photo: {
-    type: String,
-    default: 'default.jpg',
-  },
-  fullName: {
-    type: String,
-    required: [true, 'Full name is required!'],
-    minlength: [3, 'Full name with 3 or more characters required!'],
-  },
-  birthDate: {
-    type: Date,
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female'],
-      message: 'Valid genders: male, female!',
+    photo: {
+      type: String,
+      default: 'default.jpg',
     },
-  },
-  phone: {
-    type: String,
-    validate: [
-      (phone) => {
-        return phone.length === 10 || phone.length === 0;
+    fullName: {
+      type: String,
+      required: [true, 'Full name is required!'],
+      minlength: [3, 'Full name with 3 or more characters required!'],
+    },
+    birthDate: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female'],
+        message: 'Valid genders: male, female!',
       },
-      'Phone number with 10 digits required!',
-    ],
-  },
-  address: {
-    type: String,
-  },
-  jobTitle: {
-    type: String,
-  },
-  department: {
-    type: String,
-    enum: {
-      values: ['Human resource', 'Management', 'Accountin', 'Sales', 'IT'],
-      message: 'Valid types: Human resource, Management, Accountin, Sales, IT!',
     },
-  },
-  employmentType: {
-    type: String,
-    enum: {
-      values: ['Intern', 'Full time', 'Part time'],
-      message: 'Valid types: Intern, Full time, Part time!',
+    phone: {
+      type: String,
+      validate: [
+        (phone) => {
+          return phone.length === 10 || phone.length === 0;
+        },
+        'Phone number with 10 digits required!',
+      ],
     },
-  },
-  salary: {
-    type: Number,
-    default: 0,
-    validate: [
-      (salary) => {
-        return salary >= 0;
+    address: {
+      type: String,
+    },
+    jobTitle: {
+      type: String,
+    },
+    department: {
+      type: String,
+      enum: {
+        values: ['Human resource', 'Management', 'Accountin', 'Sales', 'IT'],
+        message:
+          'Valid types: Human resource, Management, Accountin, Sales, IT!',
       },
-      'Salary must be equal to 0 or higher!',
-    ],
-  },
-  entryDate: {
-    type: Date,
-  },
-  remainingLeave: {
-    type: Number,
-    default: 25,
-  },
-  leaveHistory: {
-    type: Object,
-  },
-  role: {
-    type: String,
-    enum: {
-      values: ['hr', 'employee'],
-      message: 'Valid roles: hr, employee!',
+    },
+    employmentType: {
+      type: String,
+      enum: {
+        values: ['Intern', 'Full time', 'Part time'],
+        message: 'Valid types: Intern, Full time, Part time!',
+      },
+    },
+    salary: {
+      type: Number,
+      default: 0,
+      validate: [
+        (salary) => {
+          return salary >= 0;
+        },
+        'Salary must be equal to 0 or higher!',
+      ],
+    },
+    entryDate: {
+      type: Date,
+    },
+    remainingLeave: {
+      type: Number,
+      default: 25,
+    },
+    leaveHistory: {
+      type: Object,
+    },
+    role: {
+      type: String,
+      enum: {
+        values: ['hr', 'employee'],
+        message: 'Valid roles: hr, employee!',
+      },
     },
   },
-});
+  { timestamps: true }
+);
 
 userSchema.virtual('annualSalary').get(function () {
   return this.salary * 12;

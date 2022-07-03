@@ -1,4 +1,5 @@
 const express = require('express');
+const employeeServices = require('../services/employeeServices');
 const middlewares = require('../services/middlewares');
 const userModel = require('../config/models/userModel');
 const multerServices = require('../config/multerConfig');
@@ -8,9 +9,7 @@ const router = express.Router();
 
 const getEmployees = async (req, res) => {
   try {
-    const employees = await userModel
-      .find({})
-      .select('fullName photo department jobTitle');
+    const employees = await employeeServices.getEmpls();
     res.status(200).json({ status: 'Success', data: employees });
   } catch (error) {
     const message = helpers.mongoErrorHandler(error);
@@ -21,7 +20,7 @@ const getEmployees = async (req, res) => {
 const getEmployee = async (req, res) => {
   const employeeId = req.params.id;
   try {
-    const employee = await userModel.findById(employeeId);
+    const employee = await employeeServices.getEmpl(employeeId);
     res.status(200).json({ status: 'Success', data: employee });
   } catch (error) {
     const message = helpers.mongoErrorHandler(error);
@@ -33,12 +32,11 @@ const updateEmployee = async (req, res) => {
   const employeeId = req.params.id;
   let newData = helpers.filterBodyByRole(req.body, req.user.role);
   try {
-    const updatedUser = await userModel.findOneAndUpdate(
-      { _id: employeeId },
-      newData,
-      { new: true, runValidators: true }
+    const updatedEmployee = await employeeServices.updateEmpl(
+      employeeId,
+      newData
     );
-    res.status(200).json({ status: 'Success', data: updatedUser });
+    res.status(200).json({ status: 'Success', data: updatedEmployee });
   } catch (error) {
     const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
@@ -48,7 +46,7 @@ const updateEmployee = async (req, res) => {
 const deleteEmployee = async (req, res) => {
   const employeeId = req.params.id;
   try {
-    await userModel.findByIdAndDelete(employeeId);
+    await employeeServices.deleteEmpl(employeeId);
     res.status(200).json({ status: 'Success', data: null });
   } catch (error) {
     const message = helpers.mongoErrorHandler(error);
@@ -65,21 +63,16 @@ const profilePhoto = async (req, res) => {
     });
   }
   try {
-    const updatedEmployee = await userModel.findByIdAndUpdate(
+    const updatedEmployee = await employeeServices.updatePhotoEmpl(
       employeeId,
-      {
-        photo: req.file.filename,
-      },
-      { new: true }
+      req.file.filename
     );
-
-    console.log(updatedEmployee);
-
     res.status(200).json({
       status: 'Success',
       data: updatedEmployee,
     });
   } catch (error) {
+    console.log(error);
     const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
@@ -102,7 +95,5 @@ router.put(
   updateEmployee
 );
 router.delete('/:id', middlewares.isGuest, middlewares.isHR, deleteEmployee);
-
-module.exports = router;
 
 module.exports = router;
