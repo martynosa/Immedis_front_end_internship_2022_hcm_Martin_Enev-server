@@ -103,12 +103,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.virtual('annualSalary').get(function () {
-  return this.salary * 12;
-});
-
 userSchema.virtual('employeeFor').get(function () {
-  // will calculate the entry date until today
+  // calculate dates here
 });
 
 //hashes the password
