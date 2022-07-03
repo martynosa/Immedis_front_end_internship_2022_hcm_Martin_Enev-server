@@ -61,9 +61,8 @@ const userSchema = new mongoose.Schema(
     department: {
       type: String,
       enum: {
-        values: ['Human resource', 'Management', 'Accounting', 'Sales', 'IT'],
-        message:
-          'Valid types: Human resource, Management, Accounting, Sales, IT!',
+        values: ['Management', 'Accounting', 'Sales', 'IT'],
+        message: 'Valid types: Management, Accounting, Sales, IT!',
       },
     },
     employmentType: {
