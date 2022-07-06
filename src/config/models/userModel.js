@@ -1,6 +1,29 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const leaveRequestSchema = new mongoose.Schema(
+  {
+    message: String,
+    from: {
+      type: Date,
+      required: [true, 'From date is required!'],
+    },
+    to: {
+      type: Date,
+      required: [true, 'То date is required!'],
+    },
+    status: {
+      type: String,
+      enum: {
+        values: ['pending', 'approved', 'rejected'],
+        message: 'Valid types: pending, approved, rejected!',
+      },
+      default: 'pending',
+    },
+  },
+  { timestamps: true }
+);
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -89,9 +112,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 25,
     },
-    leaveHistory: {
-      type: Object,
-    },
+    leaveRequests: [leaveRequestSchema],
     role: {
       type: String,
       enum: {
@@ -100,11 +121,22 @@ const userSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 userSchema.virtual('employeeFor').get(function () {
   // calculate dates here
+});
+
+userSchema.virtual('yearsOld').get(function () {
+  // calculate dates here
+  const oneDay = 24 * 60 * 60 * 1000;
+  return Math.floor((new Date() - this.birthDate) / oneDay / 365);
 });
 
 //hashes the password

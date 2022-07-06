@@ -54,7 +54,7 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-const profilePhoto = async (req, res) => {
+const uploadProfilePhoto = async (req, res) => {
   const employeeId = req.params.id;
   if (!req.file) {
     return res.status(500).json({
@@ -78,14 +78,18 @@ const profilePhoto = async (req, res) => {
   }
 };
 
+const requestLeave = (req, res) => {
+  console.log('hi from requestLeave');
+};
+
 router.get('/', middlewares.isGuest, getEmployees);
-router.post(
-  '/:id/uploadPhoto',
+router.put(
+  '/:id/upp',
   middlewares.isGuest,
   middlewares.isAuthorized,
   multerServices.uploadProfilePhoto,
   multerServices.resizeProfilePhoto,
-  profilePhoto
+  uploadProfilePhoto
 );
 router.get('/:id', middlewares.isGuest, middlewares.isAuthorized, getEmployee);
 router.put(
@@ -95,5 +99,13 @@ router.put(
   updateEmployee
 );
 router.delete('/:id', middlewares.isGuest, middlewares.isHR, deleteEmployee);
+
+// leave request
+router.put(
+  '/:id/lr',
+  middlewares.isGuest,
+  middlewares.isAuthorized,
+  requestLeave
+);
 
 module.exports = router;
