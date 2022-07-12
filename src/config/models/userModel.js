@@ -3,7 +3,10 @@ const bcrypt = require('bcrypt');
 
 const leaveRequestSchema = new mongoose.Schema(
   {
-    message: String,
+    message: {
+      type: String,
+      required: [true, 'Message is required!'],
+    },
     from: {
       type: Date,
       required: [true, 'From date is required!'],
@@ -128,10 +131,6 @@ const userSchema = new mongoose.Schema(
     },
   }
 );
-
-userSchema.virtual('employeeFor').get(function () {
-  // calculate dates here
-});
 
 userSchema.virtual('yearsOld').get(function () {
   // calculate dates here

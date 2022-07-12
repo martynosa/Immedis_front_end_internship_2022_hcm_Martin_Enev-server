@@ -46,9 +46,15 @@ const filterBodyByRole = (body, role) => {
   return Object.fromEntries(filteredEntries);
 };
 
+const leaveDaysCalc = (from, to) => {
+  const oneDay = 24 * 60 * 60 * 1000;
+  return (new Date(to) - new Date(from)) / oneDay;
+};
+
 const helpers = {
   filterBodyByRole,
   mongoErrorHandler,
+  leaveDaysCalc,
 };
 
 module.exports = helpers;

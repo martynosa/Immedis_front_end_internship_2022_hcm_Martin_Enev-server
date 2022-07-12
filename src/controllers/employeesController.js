@@ -1,7 +1,6 @@
 const express = require('express');
 const employeeServices = require('../services/employeeServices');
 const middlewares = require('../services/middlewares');
-const userModel = require('../config/models/userModel');
 const multerServices = require('../config/multerConfig');
 const helpers = require('../services/helpers');
 
@@ -30,7 +29,7 @@ const getEmployee = async (req, res) => {
 
 const updateEmployee = async (req, res) => {
   const employeeId = req.params.id;
-  let newData = helpers.filterBodyByRole(req.body, req.user.role);
+  const newData = helpers.filterBodyByRole(req.body, req.user.role);
   try {
     const updatedEmployee = await employeeServices.updateEmpl(
       employeeId,
@@ -72,14 +71,34 @@ const uploadProfilePhoto = async (req, res) => {
       data: updatedEmployee,
     });
   } catch (error) {
-    console.log(error);
     const message = helpers.mongoErrorHandler(error);
     res.status(500).json({ status: 'Error', message });
   }
 };
 
-const requestLeave = (req, res) => {
-  console.log('hi from requestLeave');
+const updateRequestLeave = async (req, res) => {
+  const employeeId = req.params.id;
+  const leaveDays = helpers.leaveDaysCalc(req.body.from, req.body.to);
+
+  if (leaveDays <= 0)
+    return res
+      .status(500)
+      .json({ status: 'Error', message: 'Leave cannot be negative value' });
+
+  try {
+    const updatedEmployee = await employeeServices.updateLr(
+      employeeId,
+      req.body
+    );
+
+    res.status(200).json({
+      status: 'Success',
+      data: updatedEmployee,
+    });
+  } catch (error) {
+    const message = helpers.mongoErrorHandler(error);
+    res.status(500).json({ status: 'Error', message });
+  }
 };
 
 router.get('/', middlewares.isGuest, getEmployees);
@@ -105,7 +124,7 @@ router.put(
   '/:id/lr',
   middlewares.isGuest,
   middlewares.isAuthorized,
-  requestLeave
+  updateRequestLeave
 );
 
 module.exports = router;

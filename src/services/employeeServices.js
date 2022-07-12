@@ -25,12 +25,24 @@ const updatePhotoEmpl = (employeeId, newPhoto) =>
     },
     { new: true }
   );
+
+const updateLr = (employeeId, leaveRequest) => {
+  return userModel.findOneAndUpdate(
+    { _id: employeeId },
+    {
+      $push: { leaveRequests: leaveRequest },
+    },
+    { new: true, runValidators: true }
+  );
+};
+
 const employeeServices = {
   getEmpls,
   getEmpl,
   updateEmpl,
   deleteEmpl,
   updatePhotoEmpl,
+  updateLr,
 };
 
 module.exports = employeeServices;
