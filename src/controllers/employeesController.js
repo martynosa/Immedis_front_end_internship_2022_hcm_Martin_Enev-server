@@ -76,7 +76,7 @@ const uploadProfilePhoto = async (req, res) => {
   }
 };
 
-const updateRequestLeave = async (req, res) => {
+const createLeaveRequest = async (req, res) => {
   const employeeId = req.params.id;
   const leaveDays = helpers.leaveDaysCalc(req.body.from, req.body.to);
 
@@ -101,6 +101,10 @@ const updateRequestLeave = async (req, res) => {
   }
 };
 
+const updateLeaveRequest = (req, res) => {
+  res.send('updated');
+};
+
 router.get('/', middlewares.isGuest, getEmployees);
 router.put(
   '/:id/upp',
@@ -119,12 +123,19 @@ router.put(
 );
 router.delete('/:id', middlewares.isGuest, middlewares.isHR, deleteEmployee);
 
-// leave request
+// Leave request
+router.post(
+  '/:id/lr',
+  middlewares.isGuest,
+  middlewares.isAuthorized,
+  createLeaveRequest
+);
+
 router.put(
   '/:id/lr',
   middlewares.isGuest,
   middlewares.isAuthorized,
-  updateRequestLeave
+  updateLeaveRequest
 );
 
 module.exports = router;

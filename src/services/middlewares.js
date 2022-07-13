@@ -25,7 +25,7 @@ const isGuest = (req, res, next) => {
   next();
 };
 
-//blocks non owners or employees
+//blocks employees other than self
 const isAuthorized = (req, res, next) => {
   if (req.user.role !== 'hr') {
     if (req.user._id !== req.params.id)
