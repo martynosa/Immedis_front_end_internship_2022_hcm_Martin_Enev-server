@@ -35,9 +35,19 @@ const isAuthorized = (req, res, next) => {
   }
   next();
 };
+//blocks employees other than self for lr
+const isAuthorizedLr = (req, res, next) => {
+  if (req.user.role !== 'hr') {
+    if (req.user._id !== req.body.ownerId)
+      return res
+        .status(500)
+        .json({ status: 'Error', message: 'Not authorized!' });
+  }
+  next();
+};
 
 //blocks non HRs
-const isHR = (req, res, next) => {
+const isHr = (req, res, next) => {
   if (req.user.role !== 'hr') {
     return res
       .status(500)
@@ -50,7 +60,8 @@ const middlewares = {
   auth,
   isGuest,
   isAuthorized,
-  isHR,
+  isAuthorizedLr,
+  isHr,
 };
 
 module.exports = middlewares;

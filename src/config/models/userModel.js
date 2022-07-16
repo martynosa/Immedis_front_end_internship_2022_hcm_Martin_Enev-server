@@ -1,48 +1,22 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const leaveRequestSchema = new mongoose.Schema(
-  {
-    message: {
-      type: String,
-      required: [true, 'Message is required!'],
-    },
-    from: {
-      type: Date,
-      required: [true, 'From date is required!'],
-    },
-    to: {
-      type: Date,
-      required: [true, 'То date is required!'],
-    },
-    status: {
-      type: String,
-      enum: {
-        values: ['pending', 'approved', 'rejected'],
-        message: 'Valid types: pending, approved, rejected!',
-      },
-      default: 'pending',
-    },
-  },
-  { timestamps: true }
-);
-
 const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       unique: true,
-      required: [true, 'Email is required!'],
+      required: [true, 'email is required!'],
       validate: [/^[^@\s]+@[^@\s]+\.[^@\s]+$/, 'Invalid email address!'],
     },
     password: {
       type: String,
-      required: [true, 'Password is required!'],
+      required: [true, 'password is required!'],
       minlength: [6, 'Password with 6 or more characters required!'],
     },
     rePassword: {
       type: String,
-      required: [true, 'Repeat Password is required!'],
+      required: [true, 'rePassword is required!'],
       validate: {
         validator: function (el) {
           return el === this.password;
@@ -56,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     fullName: {
       type: String,
-      required: [true, 'Full name is required!'],
+      required: [true, 'fullName is required!'],
       minlength: [3, 'Full name with 3 or more characters required!'],
     },
     birthDate: {
@@ -115,13 +89,19 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 25,
     },
-    leaveRequests: [leaveRequestSchema],
+    leaveRequests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'leaveRequest',
+      },
+    ],
     role: {
       type: String,
       enum: {
         values: ['hr', 'employee'],
         message: 'Valid roles: hr, employee!',
       },
+      required: [true, 'role is required!'],
     },
   },
   {
@@ -133,7 +113,6 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.virtual('yearsOld').get(function () {
-  // calculate dates here
   const oneDay = 24 * 60 * 60 * 1000;
   return Math.floor((new Date() - this.birthDate) / oneDay / 365);
 });
@@ -145,6 +124,10 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   this.rePassword = undefined;
   next();
+});
+
+userSchema.pre('save', async function (next) {
+  // fix department issue
 });
 
 //validates the password

@@ -17,14 +17,7 @@ const mongoErrorHandler = (error) => {
 
 const filterBodyByRole = (body, role) => {
   const entries = Object.entries(body);
-  const employee = [
-    'fullName',
-    'gender',
-    'birthDate',
-    'phone',
-    'address',
-    'leaveRequests',
-  ];
+  const employee = ['fullName', 'gender', 'birthDate', 'phone', 'address'];
   const hr = [
     'fullName',
     'gender',
@@ -36,7 +29,6 @@ const filterBodyByRole = (body, role) => {
     'department',
     'jobTitle',
     'salary',
-    'leaveRequests',
   ];
 
   role === 'hr'

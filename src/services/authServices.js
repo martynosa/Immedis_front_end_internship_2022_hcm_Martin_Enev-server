@@ -5,10 +5,20 @@ const jwt = require('jsonwebtoken');
 const jwtSign = util.promisify(jwt.sign);
 const jwtVerify = util.promisify(jwt.verify);
 
-const registerUser = async (userToRegister) => {
-  // need to select only the data required to register(postman)
-
-  await userModel.create(userToRegister);
+const registerUser = async ({
+  email,
+  password,
+  rePassword,
+  fullName,
+  role,
+}) => {
+  await userModel.create({
+    email,
+    password,
+    rePassword,
+    fullName,
+    role,
+  });
 };
 
 const logUser = async (userToLog) => {

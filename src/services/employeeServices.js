@@ -1,4 +1,5 @@
 const userModel = require('../config/models/userModel');
+const leaveRequestModel = require('../config/models/leaveRequestModel');
 
 const getEmpls = () => {
   return userModel
@@ -6,7 +7,8 @@ const getEmpls = () => {
     .select('fullName photo department jobTitle updatedAt');
 };
 
-const getEmpl = (employeeId) => userModel.findById(employeeId);
+const getEmpl = (employeeId) =>
+  userModel.findOne({ _id: employeeId }).populate('leaveRequests');
 
 const updateEmpl = (employeeId, newData) => {
   return userModel.findOneAndUpdate({ _id: employeeId }, newData, {
@@ -15,7 +17,10 @@ const updateEmpl = (employeeId, newData) => {
   });
 };
 
-const deleteEmpl = (employeeId) => userModel.findByIdAndDelete(employeeId);
+const deleteEmpl = async (employeeId) => {
+  await userModel.findByIdAndDelete(employeeId);
+  await leaveRequestModel.deleteMany({ ownerId: employeeId });
+};
 
 const updatePhotoEmpl = (employeeId, newPhoto) =>
   userModel.findByIdAndUpdate(
@@ -26,23 +31,12 @@ const updatePhotoEmpl = (employeeId, newPhoto) =>
     { new: true }
   );
 
-const updateLr = (employeeId, leaveRequest) => {
-  return userModel.findOneAndUpdate(
-    { _id: employeeId },
-    {
-      $push: { leaveRequests: leaveRequest },
-    },
-    { new: true, runValidators: true }
-  );
-};
-
 const employeeServices = {
   getEmpls,
   getEmpl,
   updateEmpl,
   deleteEmpl,
   updatePhotoEmpl,
-  updateLr,
 };
 
 module.exports = employeeServices;
