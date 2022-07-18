@@ -28,8 +28,18 @@ const leaveRequestSchema = new mongoose.Schema(
       required: [true, 'ownerId is required!'],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
+
+leaveRequestSchema.virtual('days').get(function () {
+  const oneDay = 24 * 60 * 60 * 1000;
+  return (new Date(this.to) - new Date(this.from)) / oneDay + 1;
+});
 
 const leaveRequestModel = mongoose.model('leaveRequest', leaveRequestSchema);
 

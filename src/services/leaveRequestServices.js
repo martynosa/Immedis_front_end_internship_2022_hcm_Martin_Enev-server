@@ -3,22 +3,37 @@ const userModel = require('../config/models/userModel');
 
 const createLr = async (lr) => {
   const newLr = await leaveRequestModel.create(lr);
-  return userModel
-    .findByIdAndUpdate(
-      { _id: lr.ownerId },
-      { $push: { leaveRequests: newLr._id } },
-      { new: true, runValidators: true }
-    )
-    .populate('leaveRequests');
+  let employee = await userModel.findById(lr.ownerId).populate('leaveRequests');
+  employee.leaveRequests.push(newLr);
+  employee.save({ validateBeforeSave: false });
+  return employee;
 };
 
 const patchLr = async ({ _id, status }) => {
-  const newLr = await leaveRequestModel.findByIdAndUpdate(
-    _id,
-    { status },
-    { new: true, runValidators: true }
-  );
-  return userModel.findById(newLr.ownerId).populate('leaveRequests');
+  // update lr
+  let lr = await leaveRequestModel.findById(_id);
+  if (lr.status !== 'pending')
+    throw 'Leave has already been approved or rejected!';
+  lr.status = status;
+
+  // update user
+  if (status === 'approved') {
+    let employee = await userModel
+      .findById(lr.ownerId)
+      .populate('leaveRequests');
+    if (employee.remainingLeave < lr.days)
+      throw 'Not enough leave days remaining!';
+    employee.remainingLeave -= lr.days;
+    lr.save();
+    employee.save({ validateBeforeSave: false });
+    employee.leaveRequests.forEach((lr) => {
+      if (lr._id == _id) lr.status = status;
+    });
+    return employee;
+  }
+
+  lr.save();
+  return userModel.findById(lr.ownerId).populate('leaveRequests');
 };
 
 const leaveRequestServices = {

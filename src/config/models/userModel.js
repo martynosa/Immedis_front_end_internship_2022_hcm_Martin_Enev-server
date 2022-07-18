@@ -47,6 +47,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       validate: [
         (phone) => {
+          if (/\D/g.test(phone)) return false;
           return phone.length === 10 || phone.length === 0;
         },
         'Phone number with 10 digits required!',

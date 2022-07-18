@@ -8,10 +8,10 @@ const getEmpls = () => {
 };
 
 const getEmpl = (employeeId) =>
-  userModel.findOne({ _id: employeeId }).populate('leaveRequests');
+  userModel.findById(employeeId).populate('leaveRequests');
 
 const updateEmpl = (employeeId, newData) => {
-  return userModel.findOneAndUpdate({ _id: employeeId }, newData, {
+  return userModel.findByIdAndUpdate(employeeId, newData, {
     new: true,
     runValidators: true,
   });
