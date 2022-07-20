@@ -43,11 +43,12 @@ const createToken = (user) => {
     email,
     role,
   };
-  return jwtSign(payload, process.env.SECRET);
+  return jwtSign(payload, process.env.SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 };
 
-const verifyToken = (token) =>
-  jwtVerify(token, process.env.SECRET, { expiresIn: '1d' });
+const verifyToken = (token) => jwtVerify(token, process.env.SECRET);
 
 const getUser = (id) => userModel.findById(id).lean();
 
