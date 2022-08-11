@@ -59,13 +59,6 @@ const userSchema = new mongoose.Schema(
     jobTitle: {
       type: String,
     },
-    department: {
-      type: String,
-      enum: {
-        values: ['Management', 'Accounting', 'Sales', 'IT'],
-        message: 'Valid types: Management, Accounting, Sales, IT!',
-      },
-    },
     employmentType: {
       type: String,
       enum: {
@@ -125,10 +118,6 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   this.rePassword = undefined;
   next();
-});
-
-userSchema.pre('save', async function (next) {
-  // fix department issue
 });
 
 //validates the password

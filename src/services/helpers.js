@@ -26,7 +26,6 @@ const filterBodyByRole = (body, role) => {
     'address',
     'entryDate',
     'employmentType',
-    'department',
     'jobTitle',
     'salary',
   ];

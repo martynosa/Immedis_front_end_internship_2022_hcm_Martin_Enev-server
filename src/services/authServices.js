@@ -43,9 +43,7 @@ const createToken = (user) => {
     email,
     role,
   };
-  return jwtSign(payload, process.env.SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  return jwtSign(payload, process.env.SECRET);
 };
 
 const verifyToken = (token) => jwtVerify(token, process.env.SECRET);

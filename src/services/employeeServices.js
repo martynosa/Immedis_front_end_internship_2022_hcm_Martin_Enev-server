@@ -4,7 +4,7 @@ const leaveRequestModel = require('../config/models/leaveRequestModel');
 const getEmpls = () => {
   return userModel
     .find({})
-    .select('fullName photo department jobTitle updatedAt');
+    .select('fullName photo employmentType jobTitle updatedAt');
 };
 
 const getEmpl = (employeeId) =>
