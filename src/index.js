@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const initMongoose = require('./config/mongooseConfig');
 const middlewares = require('./services/middlewares');
 const router = require('./router');
+const errorHandler = require('./services/errors/errorHandler');
 
 const PORT = process.env.PORT || 5000;
 
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 app.use(cookieParser());
 app.use(middlewares.auth);
 app.use(router);
+app.use(errorHandler);
 
 initMongoose()
   .then(() =>

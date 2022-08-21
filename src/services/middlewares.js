@@ -1,4 +1,5 @@
 const authServices = require('./authServices');
+const AppError = require('./errors/AppError');
 
 //sets the currently logged in user
 const auth = async (req, res, next) => {
@@ -13,14 +14,14 @@ const auth = async (req, res, next) => {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(500).json({ status: 'Error', message: error.message });
+    next(error);
   }
 };
 
 //blocks non logged users
 const isGuest = (req, res, next) => {
   if (!req.user) {
-    return res.status(500).json({ status: 'Error', message: 'Not logged in!' });
+    next(new AppError('Not logged in!', 401));
   }
   next();
 };
@@ -29,9 +30,7 @@ const isGuest = (req, res, next) => {
 const isAuthorized = (req, res, next) => {
   if (req.user.role !== 'hr') {
     if (req.user._id !== req.params.id)
-      return res
-        .status(500)
-        .json({ status: 'Error', message: 'Not authorized!' });
+      next(new AppError('Not authorized!', 403));
   }
   next();
 };
@@ -39,9 +38,7 @@ const isAuthorized = (req, res, next) => {
 const isAuthorizedLr = (req, res, next) => {
   if (req.user.role !== 'hr') {
     if (req.user._id !== req.body.ownerId)
-      return res
-        .status(500)
-        .json({ status: 'Error', message: 'Not authorized!' });
+      next(new AppError('Not authorized!', 403));
   }
   next();
 };
@@ -49,9 +46,7 @@ const isAuthorizedLr = (req, res, next) => {
 //blocks non HRs
 const isHr = (req, res, next) => {
   if (req.user.role !== 'hr') {
-    return res
-      .status(500)
-      .json({ status: 'Error', message: "Authorized for HR's only!" });
+    next(new AppError("Authorized for HR's only!", 403));
   }
   next();
 };

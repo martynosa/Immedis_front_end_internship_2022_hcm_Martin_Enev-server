@@ -6,25 +6,25 @@ const helpers = require('../services/helpers');
 
 const router = express.Router();
 
-const createLeaveRequest = async (req, res) => {
+const createLeaveRequest = async (req, res, next) => {
+  if (helpers.leaveDaysCalc(req.body.from, req.body.to) < 0) {
+    next(new AppError('Leave cannot be negative value', 400));
+  }
+
   try {
-    if (helpers.leaveDaysCalc(req.body.from, req.body.to) < 0)
-      throw 'Leave cannot be negative value';
     const updatedEmployee = await leaveRequestServices.createLr(req.body);
     res.status(200).json({ status: 'Success', data: updatedEmployee });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
-const patchLeaveRequest = async (req, res) => {
+const patchLeaveRequest = async (req, res, next) => {
   try {
     const updatedEmployee = await patchLr(req.body);
     res.status(200).json({ status: 'Success', data: updatedEmployee });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 

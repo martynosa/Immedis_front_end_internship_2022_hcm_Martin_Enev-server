@@ -1,4 +1,5 @@
 const userModel = require('../config/models/userModel');
+const AppError = require('./errors/AppError');
 const util = require('util');
 const jwt = require('jsonwebtoken');
 
@@ -25,12 +26,12 @@ const logUser = async (userToLog) => {
   const { email, password } = userToLog;
   const user = await userModel.findOne({ email });
   if (!email || !password || !user) {
-    throw 'Email or Password are invalid!';
+    throw new AppError('Email or Password are invalid!', 401);
   }
 
   const isValid = await user.validatePassword(password);
   if (!isValid) {
-    throw 'Email or Password are invalid!';
+    throw new AppError('Email or Password are invalid!', 401);
   }
 
   return user;

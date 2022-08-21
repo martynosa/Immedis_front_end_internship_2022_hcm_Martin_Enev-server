@@ -3,32 +3,36 @@ const employeeServices = require('../services/employeeServices');
 const middlewares = require('../services/middlewares');
 const multerServices = require('../config/multerConfig');
 const helpers = require('../services/helpers');
+const AppError = require('../services/errors/AppError');
 
 const router = express.Router();
 
-const getEmployees = async (req, res) => {
+const getEmployees = async (req, res, next) => {
   try {
     const employees = await employeeServices.getEmpls();
     res.status(200).json({ status: 'Success', data: employees });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
-const getEmployee = async (req, res) => {
+const getEmployee = async (req, res, next) => {
   const employeeId = req.params.id;
   try {
     const employee = await employeeServices.getEmpl(employeeId);
+    if (!employee) {
+      throw new AppError(
+        `Employee with Id: ${employeeId} does not exist!`,
+        404
+      );
+    }
     res.status(200).json({ status: 'Success', data: employee });
   } catch (error) {
-    console.log(error);
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
-const updateEmployee = async (req, res) => {
+const updateEmployee = async (req, res, next) => {
   const employeeId = req.params.id;
   const newData = helpers.filterBodyByRole(req.body, req.user.role);
   try {
@@ -38,29 +42,24 @@ const updateEmployee = async (req, res) => {
     );
     res.status(200).json({ status: 'Success', data: updatedEmployee });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
-const deleteEmployee = async (req, res) => {
+const deleteEmployee = async (req, res, next) => {
   const employeeId = req.params.id;
   try {
     await employeeServices.deleteEmpl(employeeId);
     res.status(200).json({ status: 'Success', data: null });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
-const uploadProfilePhoto = async (req, res) => {
+const uploadProfilePhoto = async (req, res, next) => {
   const employeeId = req.params.id;
   if (!req.file) {
-    return res.status(500).json({
-      status: 'Error',
-      message: 'Not an image file or no file chosen!',
-    });
+    next(new AppError('Not an image file or no file chosen!', 415));
   }
   try {
     const updatedEmployee = await employeeServices.updatePhotoEmpl(
@@ -72,8 +71,7 @@ const uploadProfilePhoto = async (req, res) => {
       data: updatedEmployee,
     });
   } catch (error) {
-    const message = helpers.mongoErrorHandler(error);
-    res.status(500).json({ status: 'Error', message });
+    next(error);
   }
 };
 
