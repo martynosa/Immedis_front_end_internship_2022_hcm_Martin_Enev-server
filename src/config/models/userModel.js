@@ -108,7 +108,10 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual('yearsOld').get(function () {
   const oneDay = 24 * 60 * 60 * 1000;
-  return Math.floor((new Date() - this.birthDate) / oneDay / 365);
+
+  return this.birthDate === null
+    ? null
+    : Math.floor((new Date() - this.birthDate) / oneDay / 365);
 });
 
 //hashes the password

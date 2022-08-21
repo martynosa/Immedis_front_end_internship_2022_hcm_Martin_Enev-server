@@ -12,7 +12,9 @@ const mongoErrorHandler = (error) => {
     return `${Object.values(error.keyValue)} already exists!`;
   }
 
-  return error;
+  return process.env.NODE_ENV === 'production'
+    ? 'General error, please try again later.'
+    : error;
 };
 
 const filterBodyByRole = (body, role) => {
